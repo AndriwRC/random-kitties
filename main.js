@@ -2,6 +2,8 @@ const API = 'https://api.thecatapi.com/v1';
 const API_KEY =
     'api_key=live_nLCkjwyz1NWCSLlj8eMoL1NfWFWPkifJLHUfed6L4SR92KX45sn77ZZ5cwe7DJbK';
 
+const spnError = document.querySelector('#error');
+
 const btnReload = document.querySelector('#btnReload');
 btnReload.addEventListener('click', loadRandomKitties);
 
@@ -10,58 +12,75 @@ const favoritesImgs = document.querySelector('#favoritesImgs');
 
 async function fetchData(urlApi) {
     const response = await fetch(urlApi);
+    // console.log(response);
+
+    if (response.status !== 200) {
+        throw new Error(
+            `An error ocurred: ${response.status} ${response.statusText}`
+        );
+    }
+
     return response.json();
 }
 
 async function loadRandomKitties() {
-    generatedImgs.textContent = '';
-    const data = await fetchData(`${API}/images/search?limit=7&${API_KEY}`);
-    // console.log(data);
-
-    data.forEach((cat, index) => {
-        /*
+    try {
+        generatedImgs.textContent = '';
+        const data = await fetchData(`${API}/images/search?limit=7&${API_KEY}`);
+        // console.log(data);
+        data.forEach((cat, index) => {
+            /*
         <div class="card">
             <img src="" alt="" class="card__img">
             <button class="card__btn">Add to Favorites</button>
         </div>
         */
-        const img = document.createElement('img');
-        img.src = cat.url;
-        img.classList.add('card__img');
+            const img = document.createElement('img');
+            img.src = cat.url;
+            img.classList.add('card__img');
 
-        const btn = document.createElement('button');
-        btn.classList.add('card__btn');
-        btn.textContent = 'Add to Favorites';
-        // btn.addEventListener('click', addToFavorites);
+            const btn = document.createElement('button');
+            btn.classList.add('card__btn');
+            btn.textContent = 'Add to Favorites';
+            // btn.addEventListener('click', addToFavorites);
 
-        const div = document.createElement('div');
-        div.classList.add('card');
-        div.id = `cat${index}`;
+            const div = document.createElement('div');
+            div.classList.add('card');
+            div.id = `cat${index}`;
 
-        div.append(img, btn);
-        generatedImgs.appendChild(div);
-    });
+            div.append(img, btn);
+            generatedImgs.appendChild(div);
+        });
+    } catch (error) {
+        console.log(error.message);
+        spnError.innerText = error.message;
+    }
 }
 
 async function loadFavoritesKitties() {
-    const data = await fetchData(`${API}/favourites?limit=7&${API_KEY}`);
-    data.forEach((cat, index) => {
-        const img = document.createElement('img');
-        img.src = cat.url;
-        img.classList.add('card__img');
+    try {
+        const data = await fetchData(`${API}/favourites?limit=7&${API_KEY}`);
+        data.forEach((cat, index) => {
+            const img = document.createElement('img');
+            img.src = cat.url;
+            img.classList.add('card__img');
 
-        const btn = document.createElement('button');
-        btn.classList.add('card__btn');
-        btn.textContent = 'Delete';
-        // btn.addEventListener('click', addToFavorites);
+            const btn = document.createElement('button');
+            btn.classList.add('card__btn');
+            btn.textContent = 'Delete';
+            // btn.addEventListener('click', addToFavorites);
 
-        const div = document.createElement('div');
-        div.classList.add('card');
-        div.id = `cat${index}`;
+            const div = document.createElement('div');
+            div.classList.add('card');
+            div.id = `cat${index}`;
 
-        div.append(img, btn);
-        favoritesImgs.appendChild(div);
-    });
+            div.append(img, btn);
+            favoritesImgs.appendChild(div);
+        });
+    } catch (error) {
+        console.log(error.message);
+        spnError.innerText = error.message;
+    }
 }
 
 loadRandomKitties();
