@@ -12,14 +12,11 @@ const favoritesImgs = document.querySelector('#favoritesImgs');
 
 async function fetchData(urlApi) {
     const response = await fetch(urlApi);
-    // console.log(response);
-
     if (response.status !== 200) {
         throw new Error(
             `An error ocurred: ${response.status} ${response.statusText}`
         );
     }
-
     return response.json();
 }
 
@@ -27,8 +24,8 @@ async function loadRandomKitties() {
     try {
         generatedImgs.textContent = '';
         const data = await fetchData(`${API}/images/search?limit=7&${API_KEY}`);
-        // console.log(data);
-        data.forEach((cat, index) => {
+        console.log(data);
+        data.forEach((cat) => {
             /*
         <div class="card">
             <img src="" alt="" class="card__img">
@@ -42,11 +39,11 @@ async function loadRandomKitties() {
             const btn = document.createElement('button');
             btn.classList.add('card__btn');
             btn.textContent = 'Add to Favorites';
-            // btn.addEventListener('click', addToFavorites);
+            btn.addEventListener('click', addToFavorites);
 
             const div = document.createElement('div');
             div.classList.add('card');
-            div.id = `cat${index}`;
+            div.id = cat.id;
 
             div.append(img, btn);
             generatedImgs.appendChild(div);
@@ -59,10 +56,13 @@ async function loadRandomKitties() {
 
 async function loadFavoritesKitties() {
     try {
-        const data = await fetchData(`${API}/favourites?limit=7&${API_KEY}`);
-        data.forEach((cat, index) => {
+        favoritesImgs.textContent = '';
+        const data = await fetchData(`${API}/favourites?${API_KEY}`);
+        console.log(data);
+
+        data.forEach((cat) => {
             const img = document.createElement('img');
-            img.src = cat.url;
+            img.src = cat.image.url;
             img.classList.add('card__img');
 
             const btn = document.createElement('button');
@@ -72,7 +72,7 @@ async function loadFavoritesKitties() {
 
             const div = document.createElement('div');
             div.classList.add('card');
-            div.id = `cat${index}`;
+            div.id = cat.image_id;
 
             div.append(img, btn);
             favoritesImgs.appendChild(div);
@@ -83,27 +83,36 @@ async function loadFavoritesKitties() {
     }
 }
 
-loadRandomKitties();
-
-// function addToFavorites(event) {
-//     // console.log(event);
-//     /*
-//     <div class="card">
-//         <img src="" alt="" class="card__img">
-//         <button class="card__btn">Delete</button>
-//     </div>
-//     */
-
-//     const btnPressed = event.target;
-//     btnPressed.textContent = 'Delete';
-//     btnPressed.removeEventListener('click', addToFavorites);
-//     btnPressed.addEventListener('click', removeFromFavorites);
-//     const card = btnPressed.parentElement;
-
-//     favoritesImgs.appendChild(card);
-// }
+async function addToFavorites(event) {
+    try {
+        const btnPressed = event.target;
+        const card = btnPressed.parentElement;
+        const response = await fetch(`${API}/favourites?${API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                image_id: card.id,
+            }),
+        });
+        if (response.status !== 200) {
+            throw new Error(
+                `An error ocurred: ${response.status} ${response.statusText}`
+            );
+        }
+        generatedImgs.removeChild(card);
+        loadFavoritesKitties();
+    } catch (error) {
+        console.log(error);
+        spnError.innerText = error.message;
+    }
+}
 
 // function removeFromFavorites(e) {
 //     const card = e.target.parentElement;
 //     favoritesImgs.removeChild(card);
 // }
+
+loadRandomKitties();
+loadFavoritesKitties();
