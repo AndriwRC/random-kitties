@@ -68,11 +68,11 @@ async function loadFavoritesKitties() {
             const btn = document.createElement('button');
             btn.classList.add('card__btn');
             btn.textContent = 'Delete';
-            // btn.addEventListener('click', addToFavorites);
+            btn.addEventListener('click', removeFromFavorites);
 
             const div = document.createElement('div');
             div.classList.add('card');
-            div.id = cat.image_id;
+            div.id = cat.id;
 
             div.append(img, btn);
             favoritesImgs.appendChild(div);
@@ -103,16 +103,38 @@ async function addToFavorites(event) {
         }
         generatedImgs.removeChild(card);
         loadFavoritesKitties();
+
+        /*TODO: Show success message */
     } catch (error) {
         console.log(error);
         spnError.innerText = error.message;
     }
 }
 
-// function removeFromFavorites(e) {
-//     const card = e.target.parentElement;
-//     favoritesImgs.removeChild(card);
-// }
+async function removeFromFavorites(event) {
+    try {
+        const btnPressed = event.target;
+        const card = btnPressed.parentElement;
+        const response = await fetch(
+            `${API}/favourites/${card.id}?${API_KEY}`,
+            {
+                method: 'DELETE',
+            }
+        );
+        if (response.status !== 200) {
+            throw new Error(
+                `An error ocurred: ${response.status} ${response.statusText}`
+            );
+        }
+        console.log(response);
+        favoritesImgs.removeChild(card);
+
+        /*TODO: Show success message */
+    } catch (error) {
+        console.log(error);
+        spnError.innerText = error.message;
+    }
+}
 
 loadRandomKitties();
 loadFavoritesKitties();
