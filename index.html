@@ -33,7 +33,14 @@
             <div class="container" id="favoritesImgs">
             </div>
         </section>
-        <button class="btn" id="btnReload">RELOAD</button>
+        <section id="uploadKitties">
+            <h3>Upload your kitty's photo</h3>
+            <form id="uploadingForm">
+                <input type="file" id="file" name="file">
+                <button type="button" onclick="uploadKittyPhoto()" class="btn">UPLOAD</button>
+            </form>
+        </section>
+        <button class="btn" onclick="loadRandomKitties()">RELOAD</button>
     </main>
 </body>
 

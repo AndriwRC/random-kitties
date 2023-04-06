@@ -4,9 +4,6 @@ const API_KEY =
 
 const spnError = document.querySelector('#error');
 
-const btnReload = document.querySelector('#btnReload');
-btnReload.addEventListener('click', loadRandomKitties);
-
 const generatedImgs = document.querySelector('#generatedImgs');
 const favoritesImgs = document.querySelector('#favoritesImgs');
 
@@ -134,6 +131,34 @@ async function removeFromFavorites(event) {
         console.log(response);
         favoritesImgs.removeChild(card);
 
+        /*TODO: Show success message */
+    } catch (error) {
+        console.log(error);
+        spnError.innerText = error.message;
+    }
+}
+
+async function uploadKittyPhoto() {
+    try {
+        const form = document.getElementById('uploadingForm');
+        const formData = new FormData(form);
+
+        console.log(formData.get('file'));
+
+        const res = await fetch(`${API}/images/upload`, {
+            method: 'POST',
+            headers: {
+                // 'Content-Type': 'multipart/form-data',
+                'X-API-KEY': API_KEY,
+            },
+            body: formData,
+        });
+        if (response.status !== 200) {
+            throw new Error(
+                `An error ocurred: ${response.status} ${response.statusText}`
+            );
+        }
+        console.log(res);
         /*TODO: Show success message */
     } catch (error) {
         console.log(error);
