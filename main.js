@@ -6,6 +6,8 @@ const spnError = document.querySelector('#error');
 
 const generatedImgs = document.querySelector('#generatedImgs');
 const favoritesImgs = document.querySelector('#favoritesImgs');
+const uploadSection = document.querySelector('#uploadKitties');
+const imgUpload = document.querySelector('#imgUpload');
 
 async function fetchData(urlApi) {
     const response = await fetch(urlApi, {
@@ -153,17 +155,28 @@ async function uploadKittyPhoto() {
             },
             body: formData,
         });
-        if (response.status !== 200) {
+        if (res.status < 200 || res.status >= 300) {
             throw new Error(
-                `An error ocurred: ${response.status} ${response.statusText}`
+                `An error ocurred: ${res.status} ${res.statusText}`
             );
         }
         console.log(res);
+        imgUpload.src = '';
         /*TODO: Show success message */
     } catch (error) {
         console.log(error);
         spnError.innerText = error.message;
     }
+}
+
+function openMenu() {
+    uploadSection.classList.remove('inactive');
+}
+function closeMenu() {
+    uploadSection.classList.add('inactive');
+}
+function loadImage(event) {
+    imgUpload.src = URL.createObjectURL(event.target.files[0]);
 }
 
 loadRandomKitties();

@@ -17,7 +17,7 @@
 <body>
     <header class="header">
         <h1 class="header__title">Random Kitties</h1>
-        <span class="header__kitty-icon"></span>
+        <span class="header__kitty-icon hover" onclick="openMenu()"></span>
     </header>
 
     <span id="error"></span>
@@ -33,13 +33,15 @@
             <div class="container" id="favoritesImgs">
             </div>
         </section>
-        <section id="uploadKitties" class="upload__container">
-            <h3 class="upload__title"><span class="upload-title__icon"></span> Upload Your Own kitty's Photo</h3>
+        <section id="uploadKitties" class="upload__container inactive">
+            <h3 class="upload__title"><span class="upload-title__icon hover" onclick="closeMenu()"></span> Upload Your
+                Own
+                kitty's Photo</h3>
             <form id="uploadingForm" class="upload__form">
                 <p class="upload__info">Upload your own Cat pictures. Anything that doesn't contain a cat, or contains
                     anything inappropriate will be rejected.</p>
                 <label for="file" class="upload__lbl">
-                    <input type="file" id="file" name="file" class="upload__file">
+                    <input type="file" id="file" name="file" class="upload__file" onchange="loadImage(event)">
                     <span class="file__button btn">Select An Image</span>
                     <img src="" alt="" class="file__img" id="imgUpload">
                 </label>

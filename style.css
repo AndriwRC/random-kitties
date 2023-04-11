@@ -49,6 +49,9 @@ main {
     display: flex;
     flex-direction: column;
 }
+.hover:hover {
+    cursor: pointer;
+}
 .glassmorphism {
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(180, 96, 96, 0.37);
@@ -243,4 +246,9 @@ main {
 .file__img {
     position: absolute;
     height: 100%;
+}
+
+/* JS Interaction */
+.inactive {
+    display: none;
 }
