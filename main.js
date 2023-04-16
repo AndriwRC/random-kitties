@@ -9,13 +9,16 @@ const favoritesImgs = document.querySelector('#favoritesImgs');
 const uploadSection = document.querySelector('#uploadKitties');
 const imgUpload = document.querySelector('#imgUpload');
 
-async function fetchData(urlApi) {
+async function fetchData(urlApi, method = 'GET', headers, body) {
     const response = await fetch(urlApi, {
+        method: method,
         headers: {
+            ...headers,
             'X-API-KEY': API_KEY,
         },
+        body: body,
     });
-    if (response.status !== 200) {
+    if (response.status < 200 || response.status >= 300) {
         throw new Error(
             `An error ocurred: ${response.status} ${response.statusText}`
         );
@@ -90,21 +93,12 @@ async function addToFavorites(event) {
     try {
         const btnPressed = event.target;
         const card = btnPressed.parentElement;
-        const response = await fetch(`${API}/favourites`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-API-KEY': API_KEY,
-            },
-            body: JSON.stringify({
-                image_id: card.id,
-            }),
-        });
-        if (response.status !== 200) {
-            throw new Error(
-                `An error ocurred: ${response.status} ${response.statusText}`
-            );
-        }
+        const response = await fetchData(
+            `${API}/favourites`,
+            'POST',
+            { 'Content-Type': 'application/json' },
+            JSON.stringify({ image_id: card.id })
+        );
         generatedImgs.removeChild(card);
         loadFavoritesKitties();
 
@@ -119,17 +113,10 @@ async function removeFromFavorites(event) {
     try {
         const btnPressed = event.target;
         const card = btnPressed.parentElement;
-        const response = await fetch(`${API}/favourites/${card.id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-API-KEY': API_KEY,
-            },
-        });
-        if (response.status !== 200) {
-            throw new Error(
-                `An error ocurred: ${response.status} ${response.statusText}`
-            );
-        }
+        const response = await fetchData(
+            `${API}/favourites/${card.id}`,
+            'DELETE'
+        );
         console.log(response);
         favoritesImgs.removeChild(card);
 
@@ -147,21 +134,15 @@ async function uploadKittyPhoto() {
 
         console.log(formData.get('file'));
 
-        const res = await fetch(`${API}/images/upload`, {
-            method: 'POST',
-            headers: {
-                // 'Content-Type': 'multipart/form-data',
-                'X-API-KEY': API_KEY,
-            },
-            body: formData,
-        });
-        if (res.status < 200 || res.status >= 300) {
-            throw new Error(
-                `An error ocurred: ${res.status} ${res.statusText}`
-            );
-        }
+        const res = await fetchData(
+            `${API}/images/upload`,
+            'POST',
+            ...Array(1), // Avoid third argument
+            formData
+        );
         console.log(res);
         imgUpload.src = '';
+
         /*TODO: Show success message */
     } catch (error) {
         console.log(error);
