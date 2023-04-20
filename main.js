@@ -6,7 +6,9 @@ const spnError = document.querySelector('#error');
 
 const generatedImgs = document.querySelector('#generatedImgs');
 const favoritesImgs = document.querySelector('#favoritesImgs');
-const uploadSection = document.querySelector('#uploadKitties');
+const uploadedImgs = document.querySelector('#uploadedImgs');
+const myUploadsSection = document.querySelector('#myUploads');
+const uploadKittySection = document.querySelector('#uploadKitties');
 const imgUpload = document.querySelector('#imgUpload');
 
 async function fetchData(urlApi, method = 'GET', headers, body) {
@@ -23,13 +25,14 @@ async function fetchData(urlApi, method = 'GET', headers, body) {
             `An error ocurred: ${response.status} ${response.statusText}`
         );
     }
-    return response.json();
+    return response;
 }
 
 async function loadRandomKitties() {
     try {
         generatedImgs.textContent = '';
-        const data = await fetchData(`${API}/images/search?limit=7`);
+        const response = await fetchData(`${API}/images/search?limit=7`);
+        const data = await response.json();
         console.log(data);
         data.forEach((cat) => {
             /*
@@ -63,7 +66,8 @@ async function loadRandomKitties() {
 async function loadFavoritesKitties() {
     try {
         favoritesImgs.textContent = '';
-        const data = await fetchData(`${API}/favourites`);
+        const response = await fetchData(`${API}/favourites`);
+        const data = await response.json();
         console.log(data);
 
         data.forEach((cat) => {
@@ -127,6 +131,56 @@ async function removeFromFavorites(event) {
     }
 }
 
+async function loadMyUploads() {
+    try {
+        uploadedImgs.innerText = '';
+        const response = await fetchData(`${API}/images?limit=15`);
+        const data = await response.json();
+        console.log(data);
+        data.forEach((cat) => {
+            /*
+            <div class="card">
+                <img src="" alt="" class="card__img">
+                <button class="card__btn">Delete</button>
+            </div>
+        */
+            const img = document.createElement('img');
+            img.src = cat.url;
+            img.classList.add('card__img');
+
+            const btn = document.createElement('button');
+            btn.classList.add('card__btn');
+            btn.textContent = 'Delete';
+            btn.addEventListener('click', deleteUploadedImg);
+
+            const div = document.createElement('div');
+            div.classList.add('card');
+            div.id = cat.id;
+
+            div.append(img, btn);
+            uploadedImgs.appendChild(div);
+        });
+    } catch (error) {
+        console.log(error.message);
+        spnError.innerText = error.message;
+    }
+}
+
+async function deleteUploadedImg(event) {
+    try {
+        const btnPressed = event.target;
+        const card = btnPressed.parentElement;
+        const response = await fetchData(`${API}/images/${card.id}`, 'DELETE');
+        console.log(response);
+        uploadedImgs.removeChild(card);
+
+        /*TODO: Show success message */
+    } catch (error) {
+        console.log(error);
+        spnError.innerText = error.message;
+    }
+}
+
 async function uploadKittyPhoto() {
     try {
         const form = document.getElementById('uploadingForm');
@@ -142,6 +196,7 @@ async function uploadKittyPhoto() {
         );
         console.log(res);
         imgUpload.src = '';
+        loadMyUploads();
 
         /*TODO: Show success message */
     } catch (error) {
@@ -150,11 +205,18 @@ async function uploadKittyPhoto() {
     }
 }
 
-function openMenu() {
-    uploadSection.classList.remove('inactive');
+function openMyUploads() {
+    myUploadsSection.classList.remove('inactive');
 }
-function closeMenu() {
-    uploadSection.classList.add('inactive');
+function closeMyUploads() {
+    myUploadsSection.classList.add('inactive');
+}
+
+function openUploadMenu() {
+    uploadKittySection.classList.remove('inactive');
+}
+function closeUploadMenu() {
+    uploadKittySection.classList.add('inactive');
 }
 function loadImage(event) {
     imgUpload.src = URL.createObjectURL(event.target.files[0]);
@@ -162,3 +224,4 @@ function loadImage(event) {
 
 loadRandomKitties();
 loadFavoritesKitties();
+loadMyUploads();

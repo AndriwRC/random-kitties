@@ -17,7 +17,16 @@
 <body>
     <header class="header">
         <h1 class="header__title">Random Kitties</h1>
-        <span class="header__kitty-icon hover" onclick="openMenu()"></span>
+        <nav class="header__nav">
+            <ul class="nav__container">
+                <li class="hover nav__item" onclick="openMyUploads()">
+                    <span class="item__icon item__icon--home"></span>
+                </li>
+                <li class="hover nav__item" onclick="openUploadMenu()">
+                    <span class="item__icon item__icon--kitty"></span>
+                </li>
+            </ul>
+        </nav>
     </header>
 
     <span id="error"></span>
@@ -33,8 +42,23 @@
             <div class="container" id="favoritesImgs">
             </div>
         </section>
+
+        <section id="myUploads" class="upload__container inactive">
+            <h3 class="upload__title"><span class="upload-title__icon hover" onclick="closeMyUploads()"></span>My
+                Uploads</h3>
+            <p class="upload__info">Here You'll find kitty's photos from other users, please delete only the ones you've
+                uploaded.</p>
+
+            <div id="uploadedImgs" class="uploaded-imgs__container">
+
+
+            </div>
+
+        </section>
+
         <section id="uploadKitties" class="upload__container inactive">
-            <h3 class="upload__title"><span class="upload-title__icon hover" onclick="closeMenu()"></span> Upload Your
+            <h3 class="upload__title"><span class="upload-title__icon hover" onclick="closeUploadMenu()"></span> Upload
+                Your
                 Own
                 kitty's Photo</h3>
             <form id="uploadingForm" class="upload__form">
