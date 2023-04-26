@@ -29,9 +29,17 @@
         </nav>
     </header>
 
-    <span id="error"></span>
-
     <main>
+
+        <div class="alert alert--success inactive" id="success">
+            <span class="alert__icon"></span>
+            <span class="alert__info">Success</span>
+        </div>
+        <div class="alert alert--error inactive" id="error">
+            <span class="alert__icon"></span>
+            <span class="alert__info">An error has ocurred 404 unauthorized</span>
+        </div>
+
         <section class="section glassmorphism">
             <h3 class="section__title">Kitties Images</h3>
             <div class="container" id="generatedImgs">

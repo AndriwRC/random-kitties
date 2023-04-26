@@ -11,6 +11,9 @@ const myUploadsSection = document.querySelector('#myUploads');
 const uploadKittySection = document.querySelector('#uploadKitties');
 const imgUpload = document.querySelector('#imgUpload');
 
+const success = document.querySelector('#success');
+const error = document.querySelector('#error');
+
 async function fetchData(urlApi, method = 'GET', headers, body) {
     const response = await fetch(urlApi, {
         method: method,
@@ -58,8 +61,8 @@ async function loadRandomKitties() {
             generatedImgs.appendChild(div);
         });
     } catch (error) {
-        console.log(error.message);
-        spnError.innerText = error.message;
+        console.error(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -88,8 +91,8 @@ async function loadFavoritesKitties() {
             favoritesImgs.appendChild(div);
         });
     } catch (error) {
-        console.log(error.message);
-        spnError.innerText = error.message;
+        console.error(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -106,10 +109,10 @@ async function addToFavorites(event) {
         generatedImgs.removeChild(card);
         loadFavoritesKitties();
 
-        /*TODO: Show success message */
+        successAlert('Image added successfully');
     } catch (error) {
-        console.log(error);
-        spnError.innerText = error.message;
+        console.error(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -124,10 +127,10 @@ async function removeFromFavorites(event) {
         console.log(response);
         favoritesImgs.removeChild(card);
 
-        /*TODO: Show success message */
+        successAlert('Image deleted');
     } catch (error) {
-        console.log(error);
-        spnError.innerText = error.message;
+        console.err(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -161,8 +164,8 @@ async function loadMyUploads() {
             uploadedImgs.appendChild(div);
         });
     } catch (error) {
-        console.log(error.message);
-        spnError.innerText = error.message;
+        console.error(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -174,10 +177,10 @@ async function deleteUploadedImg(event) {
         console.log(response);
         uploadedImgs.removeChild(card);
 
-        /*TODO: Show success message */
+        successAlert('Image deleted');
     } catch (error) {
-        console.log(error);
-        spnError.innerText = error.message;
+        console.error(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -198,10 +201,10 @@ async function uploadKittyPhoto() {
         imgUpload.src = '';
         loadMyUploads();
 
-        /*TODO: Show success message */
+        successAlert('Image uploaded');
     } catch (error) {
-        console.log(error);
-        spnError.innerText = error.message;
+        console.error(error.message);
+        errorAlert(error.message);
     }
 }
 
@@ -220,6 +223,21 @@ function closeUploadMenu() {
 }
 function loadImage(event) {
     imgUpload.src = URL.createObjectURL(event.target.files[0]);
+}
+
+function successAlert(message) {
+    success.classList.remove('inactive');
+    success.children[1].innerText = message;
+    setTimeout(() => {
+        success.classList.add('inactive');
+    }, 5000);
+}
+function errorAlert(message) {
+    error.classList.remove('inactive');
+    error.children[1].innerText = message;
+    setTimeout(() => {
+        error.classList.add('inactive');
+    }, 5000);
 }
 
 loadRandomKitties();
